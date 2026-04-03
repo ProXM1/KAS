@@ -1,226 +1,730 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.5">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystic Hold'em</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --felt-color: radial-gradient(ellipse at center, #0a5f38 0%, #032314 100%);
+            --gold: #D4AF37;
+            --dark-gold: #997a00;
+            --magic-glow: 0 0 15px rgba(212, 175, 55, 0.6);
+            --bg-color: #0f0f13;
+            --text-light: #f5f5dc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            font-family: 'Cinzel', serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            width: 1000px;
+            height: 700px;
+            background: var(--felt-color);
+            border: 8px solid #2a2a2a;
+            border-radius: 350px / 250px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 0 30px rgba(10, 200, 100, 0.2);
+        }
+
+        /* Golden mystic runes border */
+        #game-container::before {
+            content: '';
+            position: absolute;
+            top: 15px; left: 15px; right: 15px; bottom: 15px;
+            border: 2px dashed var(--gold);
+            border-radius: 330px / 230px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Pot & Center Area */
+        #center-area {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-width: 400px;
+        }
+
+        #pot-display {
+            font-size: 24px;
+            color: var(--gold);
+            text-shadow: 0 0 5px #000;
+            margin-bottom: 20px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 20px;
+            border-radius: 20px;
+            border: 1px solid var(--dark-gold);
+        }
+
+        #community-cards {
+            display: flex;
+            gap: 10px;
+            height: 100px;
+            justify-content: center;
+        }
+
+        /* Deck (Starting position for animations) */
+        #deck {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 90px;
+            background: radial-gradient(circle, #2a0845 0%, #6441A5 100%);
+            border: 1px solid var(--gold);
+            border-radius: 5px;
+            box-shadow: var(--magic-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 24px;
+        }
+
+        /* Players */
+        .player {
+            position: absolute;
+            text-align: center;
+            width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .player.active {
+            filter: drop-shadow(0 0 10px var(--gold));
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            background: #222;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: inset 0 0 10px #000;
+        }
+
+        .player-info {
+            background: rgba(0,0,0,0.7);
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+
+        .player-name { font-weight: bold; color: var(--gold); }
+        .player-chips { font-size: 14px; color: #ccc; }
+        .player-action { font-size: 12px; color: #aaa; font-style: italic; min-height: 15px;}
+        .player-cards { position: relative; height: 90px; margin-top: -30px; z-index: -1; }
+
+        /* Positioning Players */
+        #player-0 { bottom: -20px; left: 50%; transform: translateX(-50%); } /* Hero */
+        #player-1 { top: 50px; left: 50px; } /* Bot 1 */
+        #player-2 { top: 50px; right: 50px; } /* Bot 2 */
+
+        /* Cards and Animations */
+        .card {
+            width: 60px;
+            height: 90px;
+            position: absolute;
+            perspective: 1000px;
+            /* Transition for smooth dealing from deck to player */
+            transition: top 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                        left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                        transform 0.6s ease;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 5px;
+            border: 1px solid var(--dark-gold);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .card-front {
+            background: #fff;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+        
+        .card-front.red { color: #d00000; }
+        .card-front.black { color: #000; }
+
+        .card-back {
+            background: radial-gradient(circle, #1a0b2e 0%, #3a1c61 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--gold);
+            font-size: 24px;
+            border: 2px solid var(--gold);
+        }
+
+        /* Action UI */
+        #action-bar {
+            position: absolute;
+            bottom: -90px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            background: rgba(0,0,0,0.8);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 1px solid var(--dark-gold);
+            visibility: hidden; /* Hidden until player's turn */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #action-bar.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        button {
+            background: linear-gradient(to bottom, #4a3a11, #2a2005);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 10px 20px;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+
+        button:hover {
+            background: linear-gradient(to bottom, #5c4815, #3a2c07);
+            box-shadow: var(--magic-glow);
+            transform: translateY(-2px);
+        }
+
+        button:active { transform: translateY(0); }
+        
+        button:disabled {
+            background: #333;
+            color: #777;
+            border-color: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        #raise-amount {
+            width: 80px;
+            background: #111;
+            color: var(--gold);
+            border: 1px solid var(--dark-gold);
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+        }
+
+        #game-message {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            color: var(--gold);
+            text-shadow: 0 0 10px #000, 0 0 20px var(--gold);
+            z-index: 100;
+            text-align: center;
+        }
+
+        .suit-icon { font-size: 26px; }
+        .rank-text { font-size: 18px; margin-top: -5px; }
+
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en" class="scroll-smooth"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Portfolio | Elite Web Strategist&lt;/title&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Google Fonts: Inter --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&amp;display=swap" rel="stylesheet"&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Tailwind CSS via CDN --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Tailwind Config for Custom Colors/Fonts --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tailwind.config = {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>theme: {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>extend: {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>fontFamily: {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>sans: ['Inter', 'sans-serif'],</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>colors: {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>dark: '#0a0a0a',</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>accent: '#3b82f6', // Bright Blue</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>accentHover: '#2563eb',</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>surface: '#171717',</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Custom scrollbar for a polished look */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar-track {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #0a0a0a;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar-thumb {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #333;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar-thumb:hover {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #555;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body class="bg-dark text-gray-300 font-sans antialiased selection:bg-accent selection:text-white"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Navigation --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;nav class="fixed w-full z-50 top-0 bg-dark/80 backdrop-blur-md border-b border-gray-800 transition-all"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;a href="#" class="text-white font-bold text-xl tracking-tighter"&gt;STUDIO&lt;span class="text-accent"&gt;X&lt;/span&gt;&lt;/a&gt;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Desktop Menu --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="hidden md:flex space-x-8 text-sm font-semibold tracking-wide"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#expertise" class="hover:text-white transition-colors"&gt;Expertise&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#work" class="hover:text-white transition-colors"&gt;Selected Work&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#contact" class="hover:text-white transition-colors"&gt;Contact&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- CTA Button --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;a href="#contact" class="hidden md:inline-block bg-accent hover:bg-accentHover text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)]"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>Start a Project</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Mobile Menu Icon (Visual only for boilerplate) --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="md:hidden text-white focus:outline-none"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"&gt;&lt;/path&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/nav&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Hero Section --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="home" class="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden px-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Background Gradient Glow --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/20 rounded-full blur-[120px] -z-10"&gt;&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-4xl mx-auto text-center relative z-10"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="uppercase tracking-widest text-accent text-xs font-bold mb-4 block"&gt;Elite Web Strategist &amp; UX Designer&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h1 class="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6 tracking-tight"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>I build websites that &lt;br class="hidden md:block" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-accent"&gt;drive aggressive growth.&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>Combining high-converting UX design, brutalist brand storytelling, and modern web architecture to turn your traffic into a cult following.</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex flex-col sm:flex-row justify-center gap-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#work" class="bg-white text-dark px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide hover:bg-gray-200 transition-all"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>View My Work</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#contact" class="border border-gray-600 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide hover:border-gray-400 transition-all"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>Book a Strategy Call</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Expertise Section --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="expertise" class="py-24 bg-surface px-6 border-y border-gray-800"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-7xl mx-auto"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="mb-16 md:flex justify-between items-end"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-3xl md:text-5xl font-bold text-white tracking-tight"&gt;My Arsenal.&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-gray-400 max-w-md mt-4 md:mt-0"&gt;I don't just design pretty pages. I architect funnels engineered to capture attention and convert.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-cols-1 md:grid-cols-3 gap-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Skill 1 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-dark p-8 rounded-2xl border border-gray-800 hover:border-accent/50 transition-colors"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-6 text-accent"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-xl font-bold text-white mb-3"&gt;Conversion UX&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-gray-400 text-sm leading-relaxed"&gt;Frictionless user journeys, psychological triggers, and strategic UI elements that guide users straight to the checkout.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Skill 2 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-dark p-8 rounded-2xl border border-gray-800 hover:border-accent/50 transition-colors"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-6 text-accent"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-xl font-bold text-white mb-3"&gt;Brand Storytelling&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-gray-400 text-sm leading-relaxed"&gt;Crafting kinetic, unapologetic brand voices. I transform generic products into lifestyle icons through punchy copywriting.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Skill 3 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-dark p-8 rounded-2xl border border-gray-800 hover:border-accent/50 transition-colors"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-6 text-accent"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-xl font-bold text-white mb-3"&gt;Frontend Architecture&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-gray-400 text-sm leading-relaxed"&gt;Lightning-fast, mobile-first code using modern stacks (HTML, Tailwind, JS) ensuring bounce rates stay near zero.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Selected Work Section --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="work" class="py-24 px-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-7xl mx-auto"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-3xl md:text-5xl font-bold text-white tracking-tight mb-16"&gt;Selected Work.&lt;/h2&gt;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-cols-1 md:grid-cols-2 gap-10"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Project 1 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="group cursor-pointer"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="overflow-hidden rounded-2xl bg-surface border border-gray-800 aspect-video mb-6 relative"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Placeholder for Project Image --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="absolute inset-0 bg-gradient-to-br from-gray-800 to-dark flex items-center justify-center group-hover:scale-105 transition-transform duration-500"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="text-gray-600 font-bold text-2xl tracking-widest uppercase"&gt;KAS Beverage&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex justify-between items-start"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3 class="text-2xl font-bold text-white mb-2"&gt;KAS Beverage Co.&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;p class="text-gray-400"&gt;E-Commerce / Conversion Strategy&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-accent group-hover:translate-x-2 transition-transform duration-300"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Project 2 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="group cursor-pointer"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="overflow-hidden rounded-2xl bg-surface border border-gray-800 aspect-video mb-6 relative"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Placeholder for Project Image --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="absolute inset-0 bg-gradient-to-br from-gray-800 to-dark flex items-center justify-center group-hover:scale-105 transition-transform duration-500"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="text-gray-600 font-bold text-2xl tracking-widest uppercase"&gt;Fintech App UI&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex justify-between items-start"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3 class="text-2xl font-bold text-white mb-2"&gt;Aura Finance&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;p class="text-gray-400"&gt;Web App / UX Design&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-accent group-hover:translate-x-2 transition-transform duration-300"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Contact / CTA Section --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="contact" class="py-32 px-6 bg-accent relative overflow-hidden text-center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Decorative background element --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="absolute -top-24 -right-24 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl pointer-events-none"&gt;&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-3xl mx-auto relative z-10"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight"&gt;Ready to dominate your market?&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-blue-100 text-lg mb-10"&gt;Stop losing traffic to bad design. Let's build an experience that converts.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;a href="mailto:hello@example.com" class="inline-block bg-dark text-white px-10 py-5 rounded-full font-bold text-lg uppercase tracking-wide hover:bg-gray-900 shadow-2xl hover:scale-105 transition-all"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>Let's Talk</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Footer --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;footer class="bg-dark py-8 px-6 border-t border-gray-800 text-center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p class="text-gray-500 text-sm font-semibold tracking-wide"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&amp;copy; 2026 STUDIO&lt;span class="text-accent"&gt;X&lt;/span&gt;. Built for high conversion.</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/footer&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+    <div id="game-container">
+        <div id="game-message">Welcome to Mystic Hold'em</div>
+        
+        <div id="deck">✺</div>
+
+        <div id="center-area">
+            <div id="pot-display">Pot: <span id="pot-amount">0</span> 🪙</div>
+            <div id="community-cards"></div>
+        </div>
+
+        <div id="player-1" class="player">
+            <div class="avatar">🧙‍♂️</div>
+            <div class="player-info">
+                <div class="player-name">Archmage Alaric</div>
+                <div class="player-chips"><span id="p1-chips">1000</span> 🪙</div>
+                <div class="player-action" id="p1-action"></div>
+            </div>
+            <div class="player-cards" id="p1-cards"></div>
+        </div>
+
+        <div id="player-2" class="player">
+            <div class="avatar">🧝‍♂️</div>
+            <div class="player-info">
+                <div class="player-name">Rogue Sylas</div>
+                <div class="player-chips"><span id="p2-chips">1000</span> 🪙</div>
+                <div class="player-action" id="p2-action"></div>
+            </div>
+            <div class="player-cards" id="p2-cards"></div>
+        </div>
+
+        <div id="player-0" class="player">
+            <div class="avatar">🔮</div>
+            <div class="player-info">
+                <div class="player-name">You (The Hero)</div>
+                <div class="player-chips"><span id="p0-chips">1000</span> 🪙</div>
+                <div class="player-action" id="p0-action"></div>
+            </div>
+            <div class="player-cards" id="p0-cards"></div>
+        </div>
+    </div>
+
+    <div id="action-bar">
+        <button id="btn-fold" onclick="playerAction('fold')">Fold</button>
+        <button id="btn-call" onclick="playerAction('call')">Call/Check</button>
+        <input type="number" id="raise-amount" value="50" step="10">
+        <button id="btn-raise" onclick="playerAction('raise')">Raise</button>
+        <button id="btn-next" onclick="startNewHand()" style="display:none; background:#1a4f1a; border-color:#2d8a2d;">Next Hand</button>
+    </div>
+
+    <script>
+        // --- GAME LOGIC & STATE ---
+        const SUITS = ['♠', '♥', '♦', '♣'];
+        const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
+        
+        let deck = [];
+        let communityCards = [];
+        let pot = 0;
+        let currentBet = 0;
+        let activePlayerIndex = 0;
+        let stage = 'preflop'; // preflop, flop, turn, river, showdown
+        let dealing = false;
+
+        const players = [
+            { id: 0, name: "Hero", chips: 1000, cards: [], currentBet: 0, folded: false, isHuman: true },
+            { id: 1, name: "Alaric", chips: 1000, cards: [], currentBet: 0, folded: false, isHuman: false },
+            { id: 2, name: "Sylas", chips: 1000, cards: [], currentBet: 0, folded: false, isHuman: false }
+        ];
+
+        // --- DECK MANAGEMENT ---
+        function createDeck() {
+            deck = [];
+            for (let s of SUITS) {
+                for (let r of RANKS) {
+                    deck.push({ suit: s, rank: r, color: (s === '♥' || s === '♦') ? 'red' : 'black' });
+                }
+            }
+            // Shuffle
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+
+        function drawCard() {
+            return deck.pop();
+        }
+
+        // --- UI & ANIMATION ---
+        function createCardElement(card, index, total, isHidden = false) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = `card ${isHidden ? '' : 'flipped'}`;
+            
+            // Start at deck position
+            const deckRect = document.getElementById('deck').getBoundingClientRect();
+            const containerRect = document.getElementById('game-container').getBoundingClientRect();
+            
+            cardDiv.style.left = `${deckRect.left - containerRect.left}px`;
+            cardDiv.style.top = `${deckRect.top - containerRect.top}px`;
+            cardDiv.style.zIndex = 10 + index;
+
+            const inner = document.createElement('div');
+            inner.className = 'card-inner';
+
+            const back = document.createElement('div');
+            back.className = 'card-face card-back';
+            back.innerHTML = '✺'; // Magic rune
+
+            const front = document.createElement('div');
+            front.className = `card-face card-front ${card.color}`;
+            front.innerHTML = `
+                <div class="rank-text">${card.rank === 'T' ? '10' : card.rank}</div>
+                <div class="suit-icon">${card.suit}</div>
+            `;
+
+            inner.appendChild(back);
+            inner.appendChild(front);
+            cardDiv.appendChild(inner);
+
+            document.getElementById('game-container').appendChild(cardDiv);
+            return cardDiv;
+        }
+
+        async function animateDeal(cardEl, targetEl, offsetX, isHero = false) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    const targetRect = targetEl.getBoundingClientRect();
+                    const containerRect = document.getElementById('game-container').getBoundingClientRect();
+                    
+                    cardEl.style.left = `${(targetRect.left - containerRect.left) + offsetX}px`;
+                    cardEl.style.top = `${targetRect.top - containerRect.top}px`;
+                    
+                    if(isHero) {
+                        setTimeout(() => cardEl.classList.add('flipped'), 300);
+                    }
+                    
+                    setTimeout(resolve, 600); // Wait for transition
+                }, 50);
+            });
+        }
+
+        function updateUI() {
+            document.getElementById('pot-amount').innerText = pot;
+            players.forEach(p => {
+                document.getElementById(`p${p.id}-chips`).innerText = p.chips;
+                if(p.folded) {
+                    document.getElementById(`p${p.id}-action`).innerText = "Folded";
+                    document.getElementById(`player-${p.id}`).style.opacity = 0.5;
+                }
+            });
+            
+            // Highlight active player
+            document.querySelectorAll('.player').forEach(el => el.classList.remove('active'));
+            if(!dealing && stage !== 'showdown') {
+                document.getElementById(`player-${activePlayerIndex}`).classList.add('active');
+            }
+        }
+
+        function setMessage(msg) {
+            document.getElementById('game-message').innerText = msg;
+        }
+
+        // --- GAME LOOP ---
+        async function startNewHand() {
+            // Reset UI and State
+            document.querySelectorAll('.card').forEach(c => c.remove());
+            document.getElementById('action-bar').classList.remove('visible');
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-fold').style.display = 'inline-block';
+            document.getElementById('btn-call').style.display = 'inline-block';
+            document.getElementById('btn-raise').style.display = 'inline-block';
+            document.getElementById('raise-amount').style.display = 'inline-block';
+            
+            players.forEach(p => {
+                p.cards = [];
+                p.currentBet = 0;
+                p.folded = false;
+                document.getElementById(`player-${p.id}`).style.opacity = 1;
+                document.getElementById(`p${p.id}-action`).innerText = "";
+            });
+            
+            communityCards = [];
+            pot = 0;
+            currentBet = 20; // Big blind assumed
+            stage = 'preflop';
+            createDeck();
+            updateUI();
+            setMessage("Dealing Cards...");
+            
+            // Take blinds (simplified, everyone antes for now to keep logic compact)
+            players.forEach(p => {
+                p.chips -= 10;
+                p.currentBet = 10;
+                pot += 10;
+            });
+            currentBet = 10;
+            updateUI();
+
+            dealing = true;
+            
+            // Deal hole cards
+            for (let i = 0; i < 2; i++) {
+                for (let p of players) {
+                    const card = drawCard();
+                    p.cards.push(card);
+                    
+                    const targetEl = document.getElementById(`p${p.id}-cards`);
+                    const cardEl = createCardElement(card, i, 2, !p.isHuman);
+                    cardEl.dataset.owner = p.id;
+                    
+                    await animateDeal(cardEl, targetEl, i * 30, p.isHuman);
+                }
+            }
+            
+            dealing = false;
+            activePlayerIndex = 0; // Hero starts for simplicity
+            progressTurn();
+        }
+
+        function progressTurn() {
+            updateUI();
+            
+            // Check if hand should end early (everyone folded but one)
+            const activePlayers = players.filter(p => !p.folded);
+            if (activePlayers.length === 1) {
+                handleShowdown();
+                return;
+            }
+
+            // Check if betting round is over (everyone matched current bet or folded)
+            const roundOver = activePlayers.every(p => p.currentBet === currentBet);
+            if (roundOver && activePlayerIndex === 0 && !players[0].folded) {
+                // If it's back to hero and bets are equal, move to next stage
+                nextStage();
+                return;
+            }
+
+            let currentPlayer = players[activePlayerIndex];
+            
+            if (currentPlayer.folded) {
+                activePlayerIndex = (activePlayerIndex + 1) % players.length;
+                progressTurn();
+                return;
+            }
+
+            if (currentPlayer.isHuman) {
+                setMessage("Your Turn");
+                document.getElementById('btn-call').innerText = currentPlayer.currentBet === currentBet ? "Check" : "Call";
+                document.getElementById('action-bar').classList.add('visible');
+            } else {
+                setMessage(`${currentPlayer.name}'s Turn...`);
+                setTimeout(() => handleBotTurn(currentPlayer), 1500);
+            }
+        }
+
+        function playerAction(action) {
+            document.getElementById('action-bar').classList.remove('visible');
+            const p = players[0];
+            
+            if (action === 'fold') {
+                p.folded = true;
+                document.getElementById(`p0-action`).innerText = "Folded";
+            } else if (action === 'call') {
+                const toCall = currentBet - p.currentBet;
+                p.chips -= toCall;
+                pot += toCall;
+                p.currentBet = currentBet;
+                document.getElementById(`p0-action`).innerText = toCall === 0 ? "Checked" : "Called";
+            } else if (action === 'raise') {
+                const raiseAmount = parseInt(document.getElementById('raise-amount').value);
+                const toCall = currentBet - p.currentBet;
+                const totalAmount = toCall + raiseAmount;
+                
+                if (p.chips >= totalAmount) {
+                    p.chips -= totalAmount;
+                    currentBet += raiseAmount;
+                    pot += totalAmount;
+                    p.currentBet = currentBet;
+                    document.getElementById(`p0-action`).innerText = "Raised";
+                } else {
+                    alert("Not enough chips!");
+                    progressTurn(); // retry
+                    return;
+                }
+            }
+            
+            updateUI();
+            activePlayerIndex = (activePlayerIndex + 1) % players.length;
+            progressTurn();
+        }
+
+        function handleBotTurn(bot) {
+            const toCall = currentBet - bot.currentBet;
+            
+            // Simple bot logic
+            const rand = Math.random();
+            if (toCall > bot.chips / 2 && rand > 0.8) {
+                bot.folded = true;
+                document.getElementById(`p${bot.id}-action`).innerText = "Folded";
+            } else if (rand > 0.8 && bot.chips > currentBet + 20) {
+                // Raise
+                const raise = 20;
+                bot.chips -= (toCall + raise);
+                currentBet += raise;
+                pot += (toCall + raise);
+                bot.currentBet = currentBet;
+                document.getElementById(`p${bot.id}-action`).innerText = "Raised";
+            } else {
+                // Call / Check
+                bot.chips -= toCall;
+                pot += toCall;
+                bot.currentBet = currentBet;
+                document.getElementById(`p${bot.id}-action`).innerText = toCall === 0 ? "Checked" : "Called";
+            }
+            
+            updateUI();
+            activePlayerIndex = (activePlayerIndex + 1) % players.length;
+            progressTurn();
+        }
+
+        async function nextStage() {
+            // Reset bets for round
+            players.forEach(p => p.currentBet = 0);
+            currentBet = 0;
+            updateUI();
+
+            if (stage === 'preflop') {
+                stage = 'flop';
+                setMessage("The Flop");
+                await dealCommunityCards(3);
+            } else if (stage === 'flop') {
+                stage = 'turn';
+                setMessage("The Turn");
+                await dealCommunityCards(1);
+            } else if (stage === 'turn') {
+                stage = 'river';
+                setMessage("The River");
+                await dealCommunityCards(1);
+            } else if (stage === 'river') {
+                handleShowdown();
+                return;
+            }
+            
+            activePlayerIndex = 0; // Reset to hero for simplicity
+            progressTurn();
+        }
+
+        async function dealCommunityCards(count) {
+            dealing = true;
+            for (let i = 0; i < count; i++) {
+                const card = drawCard();
+                communityCards.push(card);
+                
+                const targetEl = document.getElementById('community-cards');
+                const offset = communityCards.length * 65; // spacing
+                
+                const cardEl = createCardElement(card, communityCards.length, 5);
+                await animateDeal(cardEl, targetEl, offset, true); // True to flip face up
+            }
+            dealing = false;
+        }
+
+        function getRankValue(rankStr) {
+            const map = {'T':10, 'J':11, 'Q':12, 'K':13, 'A':14};
+            return map[rankStr] || parseInt(rankStr);
+        }
+
+        // Simplified Hand Evaluator (Scores hand based on duplicates to find Pairs, Trips, Quads)
+        // Note: A full Texas Hold'em 7-card evaluator is vast, this calculates a functional power score.
+        function evaluateHand(player) {
+            const allCards = player.cards.concat(communityCards);
+            const rankCounts = {};
+            const suitCounts = {};
+            let maxScore = 0;
+
+            allCards.forEach(c => {
+                const val = getRankValue(c.rank);
+                rankCounts[val] = (rankCounts[val] || 0) + 1;
+                suitCounts[c.suit] = (suitCounts[c.suit] || 0) + 1;
+                if (val > maxScore) maxScore = val; // High card base
+            });
+
+            let pairs = 0, trips = 0, quads = 0;
+            for (let val in rankCounts) {
+                if (rankCounts[val] === 2) pairs++;
+                if (rankCounts[val] === 3) trips++;
+                if (rankCounts[val] === 4) quads++;
+            }
+
+            const isFlush = Object.values(suitCounts).some(count => count >= 5);
+            
+            // Score brackets (simplistic logic)
+            if (isFlush) return 5000 + maxScore;
+            if (quads > 0) return 4000 + maxScore;
+            if (trips > 0 && pairs > 0) return 3000 + maxScore; // Full house
+            if (trips > 0) return 2000 + maxScore;
+            if (pairs > 1) return 1000 + maxScore + (pairs * 10);
+            if (pairs === 1) return 500 + maxScore;
+            
+            return maxScore; // High card
+        }
+
+        function handleShowdown() {
+            stage = 'showdown';
+            document.getElementById('action-bar').classList.add('visible');
+            document.getElementById('btn-fold').style.display = 'none';
+            document.getElementById('btn-call').style.display = 'none';
+            document.getElementById('btn-raise').style.display = 'none';
+            document.getElementById('raise-amount').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'inline-block';
+
+            // Flip bot cards
+            document.querySelectorAll('.card').forEach(c => c.classList.add('flipped'));
+
+            const activePlayers = players.filter(p => !p.folded);
+            
+            if (activePlayers.length === 1) {
+                const winner = activePlayers[0];
+                winner.chips += pot;
+                setMessage(`${winner.name} wins ${pot} 🪙 (Others folded)`);
+            } else {
+                let bestScore = -1;
+                let winners = [];
+                
+                activePlayers.forEach(p => {
+                    const score = evaluateHand(p);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        winners = [p];
+                    } else if (score === bestScore) {
+                        winners.push(p);
+                    }
+                });
+
+                const winAmount = Math.floor(pot / winners.length);
+                winners.forEach(w => w.chips += winAmount);
+                
+                const names = winners.map(w => w.name).join(' & ');
+                setMessage(`${names} wins ${winAmount} 🪙!`);
+            }
+            pot = 0;
+            updateUI();
+        }
+
+        // Initialize the game
+        window.onload = startNewHand;
+    </script>
 </body>
 </html>
