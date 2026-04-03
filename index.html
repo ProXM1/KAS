@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.5">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en" class="scroll-smooth"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Portfolio | Elite Web Strategist&lt;/title&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Google Fonts: Inter --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Tailwind CSS via CDN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Tailwind Config for Custom Colors/Fonts --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tailwind.config = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>theme: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>extend: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>fontFamily: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>sans: ['Inter', 'sans-serif'],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>colors: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>dark: '#0a0a0a',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>accent: '#3b82f6', // Bright Blue</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>accentHover: '#2563eb',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>surface: '#171717',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Custom scrollbar for a polished look */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar-track {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #0a0a0a;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar-thumb {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #333;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar-thumb:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #555;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-dark text-gray-300 font-sans antialiased selection:bg-accent selection:text-white"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Navigation --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;nav class="fixed w-full z-50 top-0 bg-dark/80 backdrop-blur-md border-b border-gray-800 transition-all"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;a href="#" class="text-white font-bold text-xl tracking-tighter"&gt;STUDIO&lt;span class="text-accent"&gt;X&lt;/span&gt;&lt;/a&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Desktop Menu --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="hidden md:flex space-x-8 text-sm font-semibold tracking-wide"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#expertise" class="hover:text-white transition-colors"&gt;Expertise&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#work" class="hover:text-white transition-colors"&gt;Selected Work&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#contact" class="hover:text-white transition-colors"&gt;Contact&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- CTA Button --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;a href="#contact" class="hidden md:inline-block bg-accent hover:bg-accentHover text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)]"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>Start a Project</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Mobile Menu Icon (Visual only for boilerplate) --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="md:hidden text-white focus:outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"&gt;&lt;/path&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/nav&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Hero Section --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="home" class="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden px-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Background Gradient Glow --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/20 rounded-full blur-[120px] -z-10"&gt;&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-4xl mx-auto text-center relative z-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="uppercase tracking-widest text-accent text-xs font-bold mb-4 block"&gt;Elite Web Strategist &amp; UX Designer&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h1 class="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6 tracking-tight"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>I build websites that &lt;br class="hidden md:block" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-accent"&gt;drive aggressive growth.&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>Combining high-converting UX design, brutalist brand storytelling, and modern web architecture to turn your traffic into a cult following.</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex flex-col sm:flex-row justify-center gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#work" class="bg-white text-dark px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide hover:bg-gray-200 transition-all"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>View My Work</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#contact" class="border border-gray-600 text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wide hover:border-gray-400 transition-all"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>Book a Strategy Call</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Expertise Section --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="expertise" class="py-24 bg-surface px-6 border-y border-gray-800"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-7xl mx-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="mb-16 md:flex justify-between items-end"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-3xl md:text-5xl font-bold text-white tracking-tight"&gt;My Arsenal.&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-gray-400 max-w-md mt-4 md:mt-0"&gt;I don't just design pretty pages. I architect funnels engineered to capture attention and convert.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-cols-1 md:grid-cols-3 gap-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Skill 1 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-dark p-8 rounded-2xl border border-gray-800 hover:border-accent/50 transition-colors"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-6 text-accent"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-xl font-bold text-white mb-3"&gt;Conversion UX&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-gray-400 text-sm leading-relaxed"&gt;Frictionless user journeys, psychological triggers, and strategic UI elements that guide users straight to the checkout.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Skill 2 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-dark p-8 rounded-2xl border border-gray-800 hover:border-accent/50 transition-colors"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-6 text-accent"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-xl font-bold text-white mb-3"&gt;Brand Storytelling&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-gray-400 text-sm leading-relaxed"&gt;Crafting kinetic, unapologetic brand voices. I transform generic products into lifestyle icons through punchy copywriting.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Skill 3 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-dark p-8 rounded-2xl border border-gray-800 hover:border-accent/50 transition-colors"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-6 text-accent"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-xl font-bold text-white mb-3"&gt;Frontend Architecture&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-gray-400 text-sm leading-relaxed"&gt;Lightning-fast, mobile-first code using modern stacks (HTML, Tailwind, JS) ensuring bounce rates stay near zero.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Selected Work Section --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="work" class="py-24 px-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-7xl mx-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-3xl md:text-5xl font-bold text-white tracking-tight mb-16"&gt;Selected Work.&lt;/h2&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-cols-1 md:grid-cols-2 gap-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Project 1 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="group cursor-pointer"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="overflow-hidden rounded-2xl bg-surface border border-gray-800 aspect-video mb-6 relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Placeholder for Project Image --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="absolute inset-0 bg-gradient-to-br from-gray-800 to-dark flex items-center justify-center group-hover:scale-105 transition-transform duration-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="text-gray-600 font-bold text-2xl tracking-widest uppercase"&gt;KAS Beverage&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex justify-between items-start"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3 class="text-2xl font-bold text-white mb-2"&gt;KAS Beverage Co.&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;p class="text-gray-400"&gt;E-Commerce / Conversion Strategy&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-accent group-hover:translate-x-2 transition-transform duration-300"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Project 2 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="group cursor-pointer"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="overflow-hidden rounded-2xl bg-surface border border-gray-800 aspect-video mb-6 relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Placeholder for Project Image --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="absolute inset-0 bg-gradient-to-br from-gray-800 to-dark flex items-center justify-center group-hover:scale-105 transition-transform duration-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="text-gray-600 font-bold text-2xl tracking-widest uppercase"&gt;Fintech App UI&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex justify-between items-start"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3 class="text-2xl font-bold text-white mb-2"&gt;Aura Finance&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;p class="text-gray-400"&gt;Web App / UX Design&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-accent group-hover:translate-x-2 transition-transform duration-300"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Contact / CTA Section --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="contact" class="py-32 px-6 bg-accent relative overflow-hidden text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Decorative background element --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="absolute -top-24 -right-24 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl pointer-events-none"&gt;&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="max-w-3xl mx-auto relative z-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight"&gt;Ready to dominate your market?&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-blue-100 text-lg mb-10"&gt;Stop losing traffic to bad design. Let's build an experience that converts.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;a href="mailto:hello@example.com" class="inline-block bg-dark text-white px-10 py-5 rounded-full font-bold text-lg uppercase tracking-wide hover:bg-gray-900 shadow-2xl hover:scale-105 transition-all"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>Let's Talk</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Footer --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;footer class="bg-dark py-8 px-6 border-t border-gray-800 text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p class="text-gray-500 text-sm font-semibold tracking-wide"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&amp;copy; 2026 STUDIO&lt;span class="text-accent"&gt;X&lt;/span&gt;. Built for high conversion.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/footer&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
