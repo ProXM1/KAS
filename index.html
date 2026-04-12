@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mystic Hold'em — Grand Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -26,18 +26,39 @@
   --glow-win:    0 0 40px rgba(100,255,180,0.5), 0 0 80px rgba(100,255,180,0.2);
   --table-w:     1160px;
   --table-h:     720px;
+  --table-scale: 1;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body {
-  width: 100%; height: 100%;
+html {
+  width: 100%;
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
   background: var(--bg);
   overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   font-family: 'Cormorant Garamond', serif;
   color: var(--text);
   cursor: default;
+}
+
+#game-main {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 /* ═══════════════════════════════════════════════
@@ -67,14 +88,35 @@ html, body {
    TABLE
 ═══════════════════════════════════════════════ */
 #scene {
-  position: relative; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    calc(8px + env(safe-area-inset-top, 0px))
+    calc(8px + env(safe-area-inset-right, 0px))
+    calc(8px + env(safe-area-inset-bottom, 0px))
+    calc(8px + env(safe-area-inset-left, 0px));
+}
+
+#table-scale-outer {
+  position: relative;
+  flex-shrink: 0;
+  width: calc(var(--table-w) * var(--table-scale));
+  height: calc(var(--table-h) * var(--table-scale));
 }
 
 #table-wrap {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: var(--table-w);
   height: var(--table-h);
+  transform: translate(-50%, -50%) scale(var(--table-scale));
+  transform-origin: center center;
 }
 
 /* Outer rim — dark wood */
@@ -441,11 +483,22 @@ html, body {
   pointer-events: none;
   transition: all 0.5s cubic-bezier(.23,1,.32,1);
   box-shadow: 0 20px 60px rgba(0,0,0,0.9), inset 0 1px 0 rgba(232,201,122,0.2);
-  min-width: 360px;
+  width: 100%;
+  max-width: min(420px, calc(100vw - 24px));
+  box-sizing: border-box;
 }
 #hand-result.show {
   opacity: 1; pointer-events: all;
   transform: translate(-50%, -50%) scale(1);
+}
+@media (max-width: 480px) {
+  #hand-result {
+    padding: 22px 20px;
+    border-radius: 16px;
+  }
+  #hand-result .result-title { font-size: 22px; }
+  #hand-result .result-sub { font-size: 15px; margin-bottom: 16px; }
+  #hand-result .result-hands { font-size: 13px; margin-bottom: 18px; }
 }
 #hand-result .result-title {
   font-family: 'Cinzel Decorative', serif;
@@ -472,9 +525,16 @@ html, body {
 ═══════════════════════════════════════════════ */
 #action-bar {
   position: fixed;
-  bottom: 24px; left: 50%;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  max-width: calc(100vw - 16px);
   transform: translateX(-50%) translateY(140px);
-  display: flex; align-items: center; gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  row-gap: 10px;
   background: linear-gradient(135deg, rgba(4,8,6,0.96), rgba(8,20,14,0.96));
   border: 1px solid rgba(232,201,122,0.25);
   border-radius: 60px;
@@ -482,14 +542,25 @@ html, body {
   box-shadow: 0 8px 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(232,201,122,0.1);
   transition: transform 0.55s cubic-bezier(.175,.885,.32,1.275);
   z-index: 200;
+  -webkit-tap-highlight-color: transparent;
 }
 #action-bar.up { transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 480px) {
+  #action-bar {
+    border-radius: 28px;
+    padding: 10px 14px;
+    gap: 8px;
+    row-gap: 8px;
+  }
+}
 
 .action-btn {
   font-family: 'Cinzel', serif;
   font-size: 13px; font-weight: 600;
   letter-spacing: 0.5px;
   padding: 11px 24px;
+  min-height: 44px;
   border-radius: 40px;
   border: 1px solid rgba(232,201,122,0.3);
   background: transparent;
@@ -497,6 +568,7 @@ html, body {
   cursor: pointer;
   transition: all 0.25s;
   white-space: nowrap;
+  touch-action: manipulation;
 }
 .action-btn:hover:not(:disabled) {
   background: rgba(232,201,122,0.12);
@@ -523,18 +595,26 @@ html, body {
 .raise-group { display: flex; align-items: center; gap: 6px; }
 .raise-label { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); letter-spacing: 0.5px; }
 #raise-input {
-  width: 72px; padding: 10px 10px;
+  width: 72px;
+  min-height: 44px;
+  padding: 10px 10px;
   border-radius: 30px;
   border: 1px solid rgba(232,201,122,0.25);
   background: rgba(0,0,0,0.3);
-  color: var(--gold); font-size: 14px;
+  color: var(--gold);
+  font-size: 14px;
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
   text-align: center;
   outline: none;
   transition: border-color 0.25s;
+  touch-action: manipulation;
 }
 #raise-input:focus { border-color: var(--gold); }
+
+@media (max-width: 480px) {
+  #raise-input { font-size: 16px; }
+}
 
 #btn-next {
   background: linear-gradient(135deg, rgba(232,201,122,0.25), rgba(180,150,80,0.2));
@@ -547,7 +627,9 @@ html, body {
 ═══════════════════════════════════════════════ */
 #toast {
   position: fixed;
-  top: 30px; left: 50%;
+  top: calc(30px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  max-width: calc(100vw - 24px);
   transform: translateX(-50%) translateY(-80px);
   background: rgba(10,20,15,0.92);
   border: 1px solid rgba(232,201,122,0.3);
@@ -627,6 +709,13 @@ html, body {
    SCROLLBAR hide
 ═══════════════════════════════════════════════ */
 ::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card.anim-deal,
+  .card.anim-comm { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  .card.winning { animation: none !important; }
+  .coin-fly { animation-duration: 0.01ms !important; }
+}
 </style>
 </head>
 <body>
@@ -634,7 +723,9 @@ html, body {
 <div id="ambient"></div>
 <div id="stars"></div>
 
+<div id="game-main">
 <div id="scene">
+  <div id="table-scale-outer">
   <div id="table-wrap">
     <div id="table-rim"></div>
     <div id="table-rail"></div>
@@ -720,7 +811,9 @@ html, body {
 
     </div><!-- /game-area -->
   </div><!-- /table-wrap -->
+  </div><!-- /table-scale-outer -->
 </div><!-- /scene -->
+</div><!-- /game-main -->
 
 <!-- Hand result overlay -->
 <div id="hand-result">
@@ -1001,6 +1094,10 @@ function canAct(){ return players.filter(p=>!p.folded&&!p.allIn&&p.chips>0); }
 // ═══════════════════════════════════════════════════════════
 function showBar(show){
   document.getElementById('action-bar').classList.toggle('up', show);
+  requestAnimationFrame(() => {
+    updateTableScale();
+    setTimeout(updateTableScale, 560);
+  });
 }
 
 function refreshButtons(){
@@ -1239,9 +1336,48 @@ function resolveWinner(){
 }
 
 // ═══════════════════════════════════════════════════════════
+//  RESPONSIVE TABLE SCALE
+// ═══════════════════════════════════════════════════════════
+const TABLE_DESIGN_W = 1160;
+const TABLE_DESIGN_H = 720;
+
+function updateTableScale(){
+  const scene = document.getElementById('scene');
+  const bar = document.getElementById('action-bar');
+  if (!scene) return;
+  const cs = getComputedStyle(scene);
+  const pl = parseFloat(cs.paddingLeft) || 0;
+  const pr = parseFloat(cs.paddingRight) || 0;
+  const pt = parseFloat(cs.paddingTop) || 0;
+  const pb = parseFloat(cs.paddingBottom) || 0;
+  let availW = scene.clientWidth - pl - pr;
+  let availH = scene.clientHeight - pt - pb;
+  const reserve = bar ? Math.max(bar.getBoundingClientRect().height + 32, 100) : 120;
+  availH = Math.max(0, availH - reserve);
+  const s = Math.min(1, availW / TABLE_DESIGN_W, availH / TABLE_DESIGN_H);
+  document.documentElement.style.setProperty('--table-scale', String(s));
+}
+
+window.addEventListener('resize', updateTableScale);
+window.addEventListener('orientationchange', () => setTimeout(updateTableScale, 250));
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', updateTableScale);
+}
+
+// ═══════════════════════════════════════════════════════════
 //  START
 // ═══════════════════════════════════════════════════════════
-window.addEventListener('load', ()=>{ setTimeout(startNewHand, 600); });
+window.addEventListener('load', () => {
+  const scene = document.getElementById('scene');
+  const bar = document.getElementById('action-bar');
+  updateTableScale();
+  if (scene) {
+    const ro = new ResizeObserver(() => updateTableScale());
+    ro.observe(scene);
+    if (bar) ro.observe(bar);
+  }
+  setTimeout(startNewHand, 600);
+});
 </script>
 </body>
 </html>
